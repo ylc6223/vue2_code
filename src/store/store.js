@@ -21,6 +21,6 @@ export default new Vuex.Store({
       '教育',
       '食物',
       '社区'
-    ]
+    ],
   }
 })

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Create an Event</h1>
-    <form @submit.prevent="createEvent">
+    <form v-if="false" @submit.prevent="createEvent">
       <BaseSelect
         label="Select a category"
         :options="categories"
@@ -89,6 +89,39 @@
       <BaseButton type="submit" buttonClass="-fill-gradient" :disabled="$v.$anyError">Submit</BaseButton>
       <p v-if="$v.$anyError" class="errorMessage">Please fill out the required field(s).</p>
     </form>
+
+    <form  @submit.prevent="createEvent">
+      <label>Select a category</label>
+      <select v-model="event.category">
+        <option v-for="cat in categories" :key="cat">{{ cat }}</option>
+      </select>
+      <h3>Name & describe your event</h3>
+      <div class="field">
+        <label>Title</label>
+        <input v-model="event.title" type="text" placeholder="Add an event title"/>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <input v-model="event.description" type="text" placeholder="Add a description"/>
+      </div>
+      <h3>Where is your event?</h3>
+      <div class="field">
+        <label>Location</label>
+        <input v-model="event.location" type="text" placeholder="Add a location"/>
+      </div>
+      <h3>When is your event?</h3>
+      <div class="field">
+        <label>Date</label>
+        <datepicker v-model="event.date" placeholder="Select a date"/>
+      </div>
+      <div class="field">
+        <label>Select a time</label>
+        <select v-model="event.time">
+          <option v-for="time in times" :key="time">{{ time }}</option>
+        </select>
+      </div>
+      <input type="submit" class="button -fill-gradient" value="Submit"/>
+    </form>
   </div>
 </template>
 
@@ -97,10 +130,16 @@
 import Datepicker from 'vuejs-datepicker'
 import NProgress from 'nprogress'
 import { required } from 'vuelidate/lib/validators'
+import BaseSelect from "@/components/BaseSelect";
+import BaseButton from "@/components/BaseButton";
+import BaseInput from "@/components/BaseInput";
 
 export default {
   components: {
-    Datepicker
+    Datepicker,
+    BaseSelect,
+    BaseButton,
+    BaseInput
   },
   data() {
     const times = []
@@ -125,11 +164,23 @@ export default {
   },
   methods: {
     createEvent() {
-      this.$v.$touch()
-      if (!this.$v.$invalid) {
-        NProgress.start()
-        this.$store
-          .dispatch('event/createEvent', this.event)
+      // this.$v.$touch()
+      // if (!this.$v.$invalid) {
+      //   NProgress.start()
+      //   this.$store
+      //     .dispatch('event/createEvent', this.event)
+      //     .then(() => {
+      //       this.$router.push({
+      //         name: 'event-show',
+      //         params: { id: this.event.id }
+      //       })
+      //       this.event = this.createFreshEventObject()
+      //     })
+      //     .catch(() => {
+      //       NProgress.done()
+      //     })
+      // }
+      this.$store.dispatch('event/createEvent', this.event)
           .then(() => {
             this.$router.push({
               name: 'event-show',
@@ -138,10 +189,10 @@ export default {
             this.event = this.createFreshEventObject()
           })
           .catch(() => {
-            NProgress.done()
+            console.log('There was a problem creating your event.')
           })
-      }
     },
+    //新增
     createFreshEventObject() {
       const user = this.$store.state.user.user
       const id = Math.floor(Math.random() * 10000000)

@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div>count:{{count}}</div>
+    <button @click="incrementNum">+</button>
     我有一个梦想，这个梦想深深扎根于我灵魂深处。
     <MediaBox>
       <h2 slot="heading">Adam Jahr</h2>
@@ -14,10 +16,20 @@
 
 <script>
 import MediaBox from "@/components/MediaBox";
+import {mapGetters, mapState} from "vuex";
 export default {
   name: "AboutUs",
   components:{
     MediaBox
+  },
+  computed:{
+    // ...mapState(["count"])
+    ...mapGetters("user",["count"])
+  },
+  methods:{
+    incrementNum(){
+      this.$store.dispatch("user/increment",3)
+    }
   }
 }
 </script>
